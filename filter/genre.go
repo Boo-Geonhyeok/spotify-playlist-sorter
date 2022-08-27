@@ -14,22 +14,34 @@ func FilterGenres(client spotify.Client, trackIDs []spotify.ID, artists [][]spot
 			if err != nil {
 				//todo: send error
 			}
-			if matchGenres(fullArtist.Genres, genreConditions) == true {
-				// trackIDs = append(trackIDs[:index], trackIDs[index+1:]...)
+			c := make(chan bool)
+			go matchGenres(fullArtist.Genres, genreConditions, c)
+			x := <-c
+			if x == true {
 				tmpTrack = append(tmpTrack, trackIDs[index])
 				tmpArtist = append(tmpArtist, artists[index])
 				break
 			}
+			// if matchGenres(fullArtist.Genres, genreConditions) == true {
+			// 	// trackIDs = append(trackIDs[:index], trackIDs[index+1:]...)
+			// 	tmpTrack = append(tmpTrack, trackIDs[index])
+			// 	tmpArtist = append(tmpArtist, artists[index])
+			// 	break
+			// }
 		}
 	}
 	return tmpTrack, tmpArtist
 }
 
-func matchGenres(artistGenres []string, genreConditions map[string]bool) bool {
+func matchGenres(artistGenres []string, genreConditions map[string]bool, c chan bool) {
 	for _, genre := range artistGenres {
 		if genreConditions[genre] {
-			return true
+			//return true
+			c <- true
+			return
 		}
 	}
-	return false
+	c <- false
+	return
+	//return false
 }

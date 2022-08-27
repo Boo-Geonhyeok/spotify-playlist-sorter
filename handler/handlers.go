@@ -66,19 +66,20 @@ func GetFilteredPlaylist(w http.ResponseWriter, r *http.Request) {
 	if userTrackOption.Features != nil {
 		*tt, *ta = filter.FilterFeatures(client, trackIDs, artists, userTrackOption.Features)
 	}
-	user, err := client.CurrentUser()
-	if err != nil {
-		//send error
-	}
-	playlist, err := client.CreatePlaylistForUser(user.ID, "sorted", "", true)
-	if err != nil {
-		//send error
-	}
-	_, err = client.AddTracksToPlaylist(playlist.ID, trackIDs...)
-	if err != nil {
-		//send error
-	}
-	//send playlist
+	fmt.Println(trackIDs)
+	// user, err := client.CurrentUser()
+	// if err != nil {
+	// 	//send error
+	// }
+	// playlist, err := client.CreatePlaylistForUser(user.ID, "sorted", "", true)
+	// if err != nil {
+	// 	//send error
+	// }
+	// _, err = client.AddTracksToPlaylist(playlist.ID, trackIDs...)
+	// if err != nil {
+	// 	//send error
+	// }
+	// //send playlist
 }
 
 func getTracks(trackOption model.TrackOption) {

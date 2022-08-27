@@ -16,21 +16,33 @@ func FilterDate(client spotify.Client, trackIDs []spotify.ID, artists [][]spotif
 			//send error
 		}
 		releaseDate := fullTrack.Album.ReleaseDate[:4]
-		if matchDate(releaseDate, dateCondition) == true {
+		c := make(chan bool)
+		go matchDate(releaseDate, dateCondition, c)
+		x := <-c
+		if x == true {
 			tmpTrack = append(tmpTrack, trackIDs[index])
 			tmpArtist = append(tmpArtist, artists[index])
 		}
+
+		// if matchDate(releaseDate, dateCondition) == true {
+		// 	tmpTrack = append(tmpTrack, trackIDs[index])
+		// 	tmpArtist = append(tmpArtist, artists[index])
+		// }
 	}
 	return tmpTrack, tmpArtist
 }
 
-func matchDate(releaseDate string, dateCondition [2]int) bool {
+func matchDate(releaseDate string, dateCondition [2]int, c chan bool) {
 	date, err := strconv.Atoi(releaseDate)
 	if err != nil {
 		//send error
 	}
 	if date >= dateCondition[0] && date <= dateCondition[1] {
-		return true
+		c <- true
+		return
+		//return true
 	}
-	return false
+	c <- false
+	return
+	//return false
 }
