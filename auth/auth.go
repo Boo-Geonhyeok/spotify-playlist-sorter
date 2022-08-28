@@ -9,21 +9,18 @@ import (
 )
 
 var redirectURL = "http://127.0.0.1:8080/callback"
-
-// var ClientID = os.Getenv("CLIENT_ID")
-// var ClientSecret = os.Getenv("CLIENT_SECERET")
 var auth = spotify.NewAuthenticator(redirectURL, spotify.ScopePlaylistReadCollaborative, spotify.ScopePlaylistModifyPublic)
 
-func MakeAuthURL() string {
+func MakeAuthURL() (string, error) {
 	err := godotenv.Load()
 	if err != nil {
-		//send error
+		return "", err
 	}
 	var ClientID = os.Getenv("CLIENT_ID")
 	var ClientSecret = os.Getenv("CLIENT_SECERET")
 	auth.SetAuthInfo(ClientID, ClientSecret)
 	url := auth.AuthURL("state")
-	return url
+	return url, nil
 }
 
 func CreateClient(w http.ResponseWriter, r *http.Request) (client spotify.Client) {

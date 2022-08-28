@@ -1,19 +1,21 @@
 package filter
 
 import (
+	"net/http"
+
 	"github.com/zmb3/spotify"
 )
 
 var featuresByTrack [][3]float32
 var index int
 
-func FilterFeatures(client spotify.Client, trackIDs []spotify.ID, artists [][]spotify.SimpleArtist, featureCondition map[string][2]float32) ([]spotify.ID, [][]spotify.SimpleArtist) {
+func FilterFeatures(w http.ResponseWriter, client spotify.Client, trackIDs []spotify.ID, artists [][]spotify.SimpleArtist, featureCondition map[string][2]float32) ([]spotify.ID, [][]spotify.SimpleArtist) {
 	tmpTrack := trackIDs[:0]
 	tmpArtist := artists[:0]
 
 	audioFeatures, err := client.GetAudioFeatures(trackIDs...)
 	if err != nil {
-		//send error
+		http.Error(w, err.Error(), 401)
 	}
 
 	for _, feature := range audioFeatures {

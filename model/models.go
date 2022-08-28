@@ -1,11 +1,11 @@
 package model
 
 type TrackOption struct {
-	PlaylistID   string `json:"playlist_ID"`
-	Country      string
-	Release_date [2]int //[start, end]
-	Genres       []string
-	Features     map[string][2]float32
+	PlaylistID   string                `json:"playlist_ID"`
+	Country      string                `json:"country"`
+	Release_date [2]int                `json:"release_date"` //[start, end]
+	Genres       []string              `json:"genres"`
+	Features     map[string][2]float32 `json:"features"`
 }
 
 func (t *TrackOption) GetPlaylistID() string {

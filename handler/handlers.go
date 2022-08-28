@@ -20,7 +20,10 @@ var genreConditions map[string]bool
 var countryConditions map[string]bool
 
 func GetAuthURL(w http.ResponseWriter, r *http.Request) {
-	url := auth.MakeAuthURL()
+	url, err := auth.MakeAuthURL()
+	if err != nil {
+		http.Error(w, err.Error(), 401)
+	}
 	fmt.Fprintln(w, url)
 	//todo: convert url to json format
 }
@@ -31,7 +34,7 @@ func GetPlaylists(w http.ResponseWriter, r *http.Request) {
 	playlistPage, err := c.CurrentUsersPlaylists()
 	playlists := playlistPage.Playlists
 	if err != nil {
-		//todo: send error
+		http.Error(w, err.Error(), 401)
 		return
 	}
 	pi := &playlistIDs
@@ -45,7 +48,7 @@ func GetPlaylists(w http.ResponseWriter, r *http.Request) {
 func GetCondition(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&userTrackOption)
-	getTracks(userTrackOption)
+	getTracks(userTrackOption, w)
 	countryConditions = map[string]bool{}
 	genreConditions = map[string]bool{}
 	countryConditions[userTrackOption.Country] = true
@@ -58,31 +61,31 @@ func GetFilteredPlaylist(w http.ResponseWriter, r *http.Request) {
 	tt := &trackIDs
 	ta := &artists
 	if userTrackOption.Genres != nil {
-		*tt, *ta = filter.FilterGenres(client, trackIDs, artists, genreConditions)
+		*tt, *ta = filter.FilterGenres(w, client, trackIDs, artists, genreConditions)
 	}
 	if userTrackOption.Release_date != [2]int{0, 0} {
-		*tt, *ta = filter.FilterDate(client, trackIDs, artists, userTrackOption.Release_date)
+		*tt, *ta = filter.FilterDate(w, client, trackIDs, artists, userTrackOption.Release_date)
 	}
 	if userTrackOption.Features != nil {
-		*tt, *ta = filter.FilterFeatures(client, trackIDs, artists, userTrackOption.Features)
+		*tt, *ta = filter.FilterFeatures(w, client, trackIDs, artists, userTrackOption.Features)
 	}
 	fmt.Println(trackIDs)
-	// user, err := client.CurrentUser()
-	// if err != nil {
-	// 	//send error
-	// }
-	// playlist, err := client.CreatePlaylistForUser(user.ID, "sorted", "", true)
-	// if err != nil {
-	// 	//send error
-	// }
-	// _, err = client.AddTracksToPlaylist(playlist.ID, trackIDs...)
-	// if err != nil {
-	// 	//send error
-	// }
-	// //send playlist
+	user, err := client.CurrentUser()
+	if err != nil {
+		http.Error(w, err.Error(), 401)
+	}
+	playlist, err := client.CreatePlaylistForUser(user.ID, "sorted", "", true)
+	if err != nil {
+		http.Error(w, err.Error(), 401)
+	}
+	_, err = client.AddTracksToPlaylist(playlist.ID, trackIDs...)
+	if err != nil {
+		http.Error(w, err.Error(), 401)
+	}
+	//send playlist
 }
 
-func getTracks(trackOption model.TrackOption) {
+func getTracks(trackOption model.TrackOption, w http.ResponseWriter) {
 	var playlistID spotify.ID
 	stringPlaylistID := trackOption.GetPlaylistID()
 	for _, id := range playlistIDs {
@@ -92,7 +95,7 @@ func getTracks(trackOption model.TrackOption) {
 	}
 	playlistTrackPage, err := client.GetPlaylistTracks(playlistID)
 	if err != nil {
-		//todo: send error
+		http.Error(w, err.Error(), 401)
 	}
 
 	for _, track := range playlistTrackPage.Tracks {
