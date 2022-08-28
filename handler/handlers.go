@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"playlist-sorting/auth"
 	"playlist-sorting/filter"
@@ -24,8 +23,11 @@ func GetAuthURL(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), 401)
 	}
-	fmt.Fprintln(w, url)
-	//todo: convert url to json format
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"url": url,
+	})
 }
 
 func GetPlaylists(w http.ResponseWriter, r *http.Request) {
@@ -41,8 +43,7 @@ func GetPlaylists(w http.ResponseWriter, r *http.Request) {
 	for _, playlist := range playlists {
 		*pi = append(*pi, playlist.ID)
 	}
-	fmt.Fprintln(w, playlists)
-	//todo: convert playlists to json format
+	json.NewEncoder(w).Encode(playlists)
 }
 
 func GetCondition(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +70,6 @@ func GetFilteredPlaylist(w http.ResponseWriter, r *http.Request) {
 	if userTrackOption.Features != nil {
 		*tt, *ta = filter.FilterFeatures(w, client, trackIDs, artists, userTrackOption.Features)
 	}
-	fmt.Println(trackIDs)
 	user, err := client.CurrentUser()
 	if err != nil {
 		http.Error(w, err.Error(), 401)
@@ -82,7 +82,7 @@ func GetFilteredPlaylist(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), 401)
 	}
-	//send playlist
+	json.NewEncoder(w).Encode(playlist)
 }
 
 func getTracks(trackOption model.TrackOption, w http.ResponseWriter) {

@@ -37,14 +37,12 @@ func matchFeatures(featureCondition map[string][2]float32, c chan bool) {
 		if (features[0] < (featureCondition["Danceability"][0]) || features[0] > (featureCondition["Danceability"][1])) || (features[1] < (featureCondition["Instrumentalness"][0]) || features[1] > (featureCondition["Instrumentalness"][1])) || (features[2] < (featureCondition["Valence"][0]) || features[2] > (featureCondition["Valence"][1])) {
 			c <- false
 			return
-			//return false
 		}
 		i := &index
 		*i = index
 	}
 	c <- true
 	return
-	//return true
 }
 
 func checkFeatures(feature *spotify.AudioFeatures, featureCondition map[string][2]float32) {
