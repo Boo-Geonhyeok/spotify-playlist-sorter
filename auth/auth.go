@@ -8,7 +8,7 @@ import (
 	"github.com/zmb3/spotify"
 )
 
-var redirectURL = "http://127.0.0.1:8080/callback"
+var redirectURL = "http://127.0.0.1:3000/api/extract"
 var auth = spotify.NewAuthenticator(redirectURL, spotify.ScopePlaylistReadCollaborative, spotify.ScopePlaylistModifyPublic)
 
 func MakeAuthURL() (string, error) {
