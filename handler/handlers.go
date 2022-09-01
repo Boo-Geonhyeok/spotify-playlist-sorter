@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"playlist-sorting/auth"
 	"playlist-sorting/filter"
@@ -51,7 +50,7 @@ func ExtractPlaylists(w http.ResponseWriter, r *http.Request) {
 	for _, playlist := range playlists {
 		*pi = append(*pi, playlist.ID)
 	}
-	http.Redirect(w, r, "http://127.0.0.1:8080/#/callback", http.StatusMovedPermanently)
+	http.Redirect(w, r, "http://127.0.0.1:8080/#/sort", http.StatusMovedPermanently)
 }
 
 func GetPlaylists(w http.ResponseWriter, r *http.Request) {
@@ -83,25 +82,20 @@ func GetCondition(w http.ResponseWriter, r *http.Request) {
 	for _, genre := range userTrackOption.Genres {
 		genreConditions[genre] = true
 	}
-	//http.Redirect(w, r, "http://127.0.0.1:3000/api/filter", 301)
 }
 
 func GetFilteredPlaylist(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	tt := &trackIDs
 	ta := &artists
-	fmt.Println(userTrackOption.Genres, userTrackOption.Release_date, userTrackOption.Features, "1234567890")
-	if userTrackOption.Genres != nil {
+	if len(userTrackOption.Genres) > 0 {
 		*tt, *ta = filter.FilterGenres(w, client, trackIDs, artists, genreConditions)
-		fmt.Println(trackIDs, "genre")
 	}
 	if userTrackOption.Release_date != [2]int{0, 0} {
 		*tt, *ta = filter.FilterDate(w, client, trackIDs, artists, userTrackOption.Release_date)
-		fmt.Println(trackIDs, "date")
 	}
-	if userTrackOption.Features != nil {
+	if len(userTrackOption.Features) > 0 {
 		*tt, *ta = filter.FilterFeatures(w, client, trackIDs, artists, userTrackOption.Features)
-		fmt.Println(trackIDs, "feature")
 	}
 	user, err := client.CurrentUser()
 	if err != nil {
