@@ -50,7 +50,7 @@ func ExtractPlaylists(w http.ResponseWriter, r *http.Request) {
 	for _, playlist := range playlists {
 		*pi = append(*pi, playlist.ID)
 	}
-	http.Redirect(w, r, "http://127.0.0.1:8080/#/sort", http.StatusMovedPermanently)
+	http.Redirect(w, r, "http://127.0.0.1:8080", http.StatusMovedPermanently)
 }
 
 func GetPlaylists(w http.ResponseWriter, r *http.Request) {
@@ -110,6 +110,7 @@ func GetFilteredPlaylist(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 401)
 	}
 	json.NewEncoder(w).Encode(playlist)
+	reset()
 }
 
 func getTracks(userPlaylistID string, w http.ResponseWriter) {
@@ -129,4 +130,10 @@ func getTracks(userPlaylistID string, w http.ResponseWriter) {
 		trackIDs = append(trackIDs, track.Track.ID)
 		artists = append(artists, track.Track.Artists)
 	}
+}
+
+func reset() {
+	playlists = nil
+	trackIDs = nil
+	artists = nil
 }
