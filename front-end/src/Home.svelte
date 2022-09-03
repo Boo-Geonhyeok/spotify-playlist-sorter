@@ -20,5 +20,13 @@ import Sort from "./Sort.svelte";
     <Sort />
 {:else}
     <h1>You should be authorized by Spotify first. Click link.</h1>
-    <a href={authURL} on:click="{() => {sessionStorage.setItem("isRedirected", true)}}">Authorization</a>
+    <div>
+        <a href={authURL} on:click="{() => {sessionStorage.setItem("isRedirected", true)}}">Authorization</a>
+    </div>
 {/if}
+
+<style>
+    h1, div {
+        text-align: center;
+    }
+</style>

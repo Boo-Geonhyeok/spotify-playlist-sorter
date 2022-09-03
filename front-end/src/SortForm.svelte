@@ -41,6 +41,12 @@ import Result from "./Result.svelte";
         genreConditions = genreConditions
     }
 
+    function deleteGenre(g) {
+        const index = genreConditions.indexOf(g);
+        genreConditions.splice(index, 1)
+        genreConditions = genreConditions
+    }
+
     function collectDateCondition(event) {
         dateCondition = []
         dateCondition.push(parseInt(event.target[2].value))
@@ -71,9 +77,6 @@ import Result from "./Result.svelte";
     onMount(getGenreList)
 </script>
 
-
-
-
 {#if loading==true}
 <Result loading={loading}/>
 {:else}
@@ -88,7 +91,7 @@ import Result from "./Result.svelte";
     <button type="button" on:click="{addGenre}">add</button>
 
     {#each genreConditions as g}
-        <li>{g}</li>
+        <li>{g} <button type="button" on:click="{deleteGenre(g)}">x</button></li>
     {/each}
 
     <label for="date">Release Date Range</label>
@@ -97,9 +100,20 @@ import Result from "./Result.svelte";
 
     {#each features as f}
     <label for= {f.name}>{f.name}</label>
-    <input type="number" min="0" max="10" step="1" bind:value="{f.val}" placeholder="start"/>
-    <input type="number" min={f.val} max="10" step="1" placeholder="end"/>
+    <input type="number" min="0" max="10" step="1" bind:value="{f.val}" placeholder="min"/>
+    <input type="number" min={f.val} max="10" step="1" placeholder="max"/>
     {/each}
+    <hr>
     <button>start sorting</button>
 </form>
 {/if}
+
+<style>
+    form {
+        text-align: center;
+    }
+
+    label {
+        margin: 5px;
+    }
+</style>

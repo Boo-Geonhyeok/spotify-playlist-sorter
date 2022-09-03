@@ -36,10 +36,31 @@ import { append } from "svelte/internal";
     </script>
 
     <h1>{info}</h1>
+    <div class="container">
     {#each playlists as p}
-        <img src={p["images"][0]["url"]} alt="" width={p.size} on:click="{handleClick(p)}">
+        <img src={p["images"][0]["url"]} alt="" width={p.size} class="center" on:click="{handleClick(p)}">
     {/each}
+    </div>
 
     {#if showCondition == true}
         <SortForm playlistID={playlistID} />
     {/if}
+
+    <style>
+        .center {
+            text-align:center;
+            display: inline-block;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+        }
+    </style>
