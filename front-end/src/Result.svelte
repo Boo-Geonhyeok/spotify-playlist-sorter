@@ -23,7 +23,35 @@ onMount(getData)
 {#if loading == true}
     <h1>Loading...</h1>
 {:else}
-    <img src={img} alt="" width="300" />
-    <a href="{newPlaylist.external_urls["spotify"]}">link</a>
+    <h1>New Sorted Playlist</h1>
+    <div class="container">
+        <img src={img} alt="" width="300" class="center" />
+    </div>
+    <div class="container">
+        <a href="{newPlaylist.external_urls["spotify"]}">link</a>
+    </div>
 {/if}
 
+<style>
+    h1, img, a {
+        text-align: center;
+    }
+
+    .center {
+            text-align:center;
+            display: inline-block;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        a {
+            display: inline-block;
+            text-align: center;
+        }
+</style>

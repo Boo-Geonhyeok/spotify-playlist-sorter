@@ -10,7 +10,6 @@ import Sort from "./Sort.svelte";
          }).then((data) => {
                 authURL = data.url;
         });
-        console.log(localStorage.getItem("isRedirected"));
     }
 
     onMount(getAuthURL)
